@@ -5,40 +5,43 @@
 			"referenceName": "ls_azure_sql_hospital",
 			"type": "LinkedServiceReference"
 		},
+		"folder": {
+			"name": "Bronze"
+		},
 		"annotations": [],
 		"type": "AzureSqlTable",
 		"schema": [
 			{
 				"name": "patient_id",
-				"type": "nvarchar"
+				"type": "String"
 			},
 			{
 				"name": "full_name",
-				"type": "nvarchar"
+				"type": "String"
 			},
 			{
 				"name": "gender",
-				"type": "nvarchar"
+				"type": "String"
 			},
 			{
 				"name": "date_of_birth",
-				"type": "nvarchar"
+				"type": "String"
 			},
 			{
 				"name": "phone",
-				"type": "nvarchar"
+				"type": "String"
 			},
 			{
 				"name": "email",
-				"type": "nvarchar"
+				"type": "String"
 			},
 			{
 				"name": "address",
-				"type": "nvarchar"
+				"type": "String"
 			},
 			{
 				"name": "insurance_provider",
-				"type": "nvarchar"
+				"type": "String"
 			}
 		],
 		"typeProperties": {

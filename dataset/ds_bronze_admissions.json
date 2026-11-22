@@ -5,32 +5,35 @@
 			"referenceName": "ls_azure_sql_hospital",
 			"type": "LinkedServiceReference"
 		},
+		"folder": {
+			"name": "Bronze"
+		},
 		"annotations": [],
 		"type": "AzureSqlTable",
 		"schema": [
 			{
 				"name": "admission_id",
-				"type": "nvarchar"
+				"type": "String"
 			},
 			{
 				"name": "patient_id",
-				"type": "nvarchar"
+				"type": "String"
 			},
 			{
 				"name": "admission_date",
-				"type": "nvarchar"
+				"type": "String"
 			},
 			{
 				"name": "discharge_date",
-				"type": "nvarchar"
+				"type": "String"
 			},
 			{
 				"name": "department",
-				"type": "nvarchar"
+				"type": "String"
 			},
 			{
 				"name": "attending_doctor_id",
-				"type": "nvarchar"
+				"type": "String"
 			}
 		],
 		"typeProperties": {

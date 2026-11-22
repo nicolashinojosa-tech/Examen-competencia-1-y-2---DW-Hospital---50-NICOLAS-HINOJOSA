@@ -1,0 +1,132 @@
+{
+	"name": "df_gold_dim_fecha",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "ds_silver_admissions",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				},
+				{
+					"dataset": {
+						"referenceName": "ds_silver_billing",
+						"type": "DatasetReference"
+					},
+					"name": "source2"
+				},
+				{
+					"dataset": {
+						"referenceName": "ds_silver_patients",
+						"type": "DatasetReference"
+					},
+					"name": "source3"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "ds_gold_dim_fecha",
+						"type": "DatasetReference"
+					},
+					"name": "sink"
+				}
+			],
+			"transformations": [
+				{
+					"name": "union"
+				},
+				{
+					"name": "aggregate"
+				},
+				{
+					"name": "derive"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          fecha as date",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     query: 'SELECT admission_date AS fecha FROM silver.admissions WHERE admission_date IS NOT NULL UNION SELECT discharge_date FROM silver.admissions WHERE discharge_date IS NOT NULL',",
+				"     format: 'query') ~> source1",
+				"source(output(",
+				"          fecha as date",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     query: 'SELECT payment_date AS fecha FROM silver.billing WHERE payment_date IS NOT NULL',",
+				"     format: 'query') ~> source2",
+				"source(output(",
+				"          fecha as date",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     query: 'SELECT date_of_birth AS fecha FROM silver.patients WHERE date_of_birth IS NOT NULL',",
+				"     format: 'query') ~> source3",
+				"source1, source2, source3 union(byName: true)~> union",
+				"union aggregate(groupBy(fecha_completa = fecha),",
+				"     fecha = first(fecha)) ~> aggregate",
+				"aggregate derive(fecha_key = toInteger(toString(fecha_completa, 'yyyyMMdd')),",
+				"          anio = toInteger(year(fecha_completa)),",
+				"          trimestre = toInteger(case(month(fecha_completa) <= 3, 1, month(fecha_completa) <= 6, 2, month(fecha_completa) <= 9, 3, 4)),",
+				"          trimestre_nombre = case(month(fecha_completa) <= 3, 'T1', month(fecha_completa) <= 6, 'T2', month(fecha_completa) <= 9, 'T3', 'T4'),",
+				"          mes = toInteger(month(fecha_completa)),",
+				"          mes_nombre = case(month(fecha_completa) == 1, 'Enero', month(fecha_completa) == 2, 'Febrero', month(fecha_completa) == 3, 'Marzo', month(fecha_completa) == 4, 'Abril', month(fecha_completa) == 5, 'Mayo', month(fecha_completa) == 6, 'Junio', month(fecha_completa) == 7, 'Julio', month(fecha_completa) == 8, 'Agosto', month(fecha_completa) == 9, 'Septiembre', month(fecha_completa) == 10, 'Octubre', month(fecha_completa) == 11, 'Noviembre', 'Diciembre'),",
+				"          mes_corto = case(month(fecha_completa) == 1, 'Ene', month(fecha_completa) == 2, 'Feb', month(fecha_completa) == 3, 'Mar', month(fecha_completa) == 4, 'Abr', month(fecha_completa) == 5, 'May', month(fecha_completa) == 6, 'Jun', month(fecha_completa) == 7, 'Jul', month(fecha_completa) == 8, 'Ago', month(fecha_completa) == 9, 'Sep', month(fecha_completa) == 10, 'Oct', month(fecha_completa) == 11, 'Nov', 'Dic'),",
+				"          semana_anio = toInteger(weekOfYear(fecha_completa)),",
+				"          dia_mes = toInteger(dayOfMonth(fecha_completa)),",
+				"          dia_semana = toInteger(iif(dayOfWeek(fecha_completa) == 1, 7, dayOfWeek(fecha_completa) - 1)),",
+				"          dia_nombre = case(dayOfWeek(fecha_completa) == 2, 'Lunes', dayOfWeek(fecha_completa) == 3, 'Martes', dayOfWeek(fecha_completa) == 4, 'Miercoles', dayOfWeek(fecha_completa) == 5, 'Jueves', dayOfWeek(fecha_completa) == 6, 'Viernes', dayOfWeek(fecha_completa) == 7, 'Sabado', 'Domingo'),",
+				"          es_fin_de_semana = dayOfWeek(fecha_completa) == 1 || dayOfWeek(fecha_completa) == 7) ~> derive",
+				"derive sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          fecha_key as any,",
+				"          fecha_completa as timestamp,",
+				"          anio as any,",
+				"          trimestre as any,",
+				"          trimestre_nombre as any,",
+				"          mes as any,",
+				"          mes_nombre as any,",
+				"          mes_corto as any,",
+				"          semana_anio as any,",
+				"          dia_mes as any,",
+				"          dia_semana as any,",
+				"          dia_nombre as any,",
+				"          es_fin_de_semana as any",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          fecha_key,",
+				"          fecha_completa,",
+				"          anio,",
+				"          trimestre,",
+				"          trimestre_nombre,",
+				"          mes,",
+				"          mes_nombre,",
+				"          mes_corto,",
+				"          semana_anio,",
+				"          dia_mes,",
+				"          dia_semana,",
+				"          dia_nombre,",
+				"          es_fin_de_semana",
+				"     )) ~> sink"
+			]
+		}
+	}
+}

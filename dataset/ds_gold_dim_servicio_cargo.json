@@ -1,0 +1,33 @@
+{
+	"name": "ds_gold_dim_servicio_cargo",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_azure_sql_hospital",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Gold"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "servicio_cargo_key",
+				"type": "Int32"
+			},
+			{
+				"name": "tipo_cargo",
+				"type": "String"
+			},
+			{
+				"name": "estado_pago",
+				"type": "String"
+			}
+		],
+		"typeProperties": {
+			"schema": "gold",
+			"table": "dim_servicio_cargo"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

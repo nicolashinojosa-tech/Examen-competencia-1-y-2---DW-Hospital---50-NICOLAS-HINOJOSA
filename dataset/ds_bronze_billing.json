@@ -5,32 +5,35 @@
 			"referenceName": "ls_azure_sql_hospital",
 			"type": "LinkedServiceReference"
 		},
+		"folder": {
+			"name": "Bronze"
+		},
 		"annotations": [],
 		"type": "AzureSqlTable",
 		"schema": [
 			{
 				"name": "billing_id",
-				"type": "nvarchar"
+				"type": "String"
 			},
 			{
 				"name": "admission_id",
-				"type": "nvarchar"
+				"type": "String"
 			},
 			{
 				"name": "charge_type",
-				"type": "nvarchar"
+				"type": "String"
 			},
 			{
 				"name": "amount",
-				"type": "nvarchar"
+				"type": "String"
 			},
 			{
 				"name": "payment_status",
-				"type": "nvarchar"
+				"type": "String"
 			},
 			{
 				"name": "payment_date",
-				"type": "nvarchar"
+				"type": "String"
 			}
 		],
 		"typeProperties": {
